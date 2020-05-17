@@ -1,0 +1,13 @@
+.DS_STORE
+/.DS_STORE
+.history
+/.history
+.sass-cache
+/.sass-cache
+scss_files
+/scss_files
+header-styles.css.map
+/header-styles.css.map
+
+*.svg
+/*.svg
