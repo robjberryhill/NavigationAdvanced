@@ -21,44 +21,119 @@ const mblMnuTgl = (evt) => {
   }
 };
 
+const cngAtr = (elm, atr, val) => {
+  elm.setAttribute(atr, val);
+}
+
+const rstElmAryAtr = (ary, atr, val, atr2, val2) => {
+  for (let i = 0; i < ary.length; i++) {
+    let elm = ary[i];
+    let elmExp = elm.getAttribute(atr2);
+
+    if (elmExp != val2) {
+      cngAtr(elm, atr, val)
+    }
+  }
+}
+
 const mblDrpDwn = (evt) => {
+  const navCntElm = document.getElementById("NavCont");
+  let navLnkElm = navCntElm.getElementsByClassName("nav-link");
   let elm = evt.currentTarget,
     elmAtr,
-    elmPrt,
     elmMnu,
-    elmPrtMnuId;
+    elmPrtMnuId,
+    elmSel,
+    elmTab,
+    elmTgl;
 
   console.log(elm)
 
-  if (elm.classList.contains("drp-dwn-toggle")) {
-    elmPrt = elm.parentElement;
-  } else if (elm.classList.contains("drp-dwn-cls")) {
-    elmPrt = elm.parentElement.parentElement;
+  rstElmAryAtr(navLnkElm, "aria-selected", "false", "aria-expanded", "true");
+
+  elmTab = elm.getAttribute("role");
+  elmSel = elm.getAttribute("aria-selected");
+  elmAtr = elm.getAttribute("aria-expanded");
+
+  if (elmAtr) {
+    setTimeout(() => {
+      if (elmTab === "tab" && elmSel === "false" && elmAtr === "false") {
+        cngAtr(elm, "aria-selected", "true");
+      } else if (elmTab === "tab" && elmAtr === "true") {
+        cngAtr(elm, "aria-selected", "false");
+      }
+    }, 500);
+  } else {
+    setTimeout(() => {
+      if (elmTab === "tab" && elmSel === "false") {
+        cngAtr(elm, "aria-selected", "true");
+      }
+    }, 500);
   }
 
-  elmAtr = elmPrt.getAttribute("aria-expanded");
-  elmPrtMnuId = elmPrt.getAttribute('aria-controls')
+  // Need to configure drp-dwn-cls
+
+  // if (elm.classList.contains("drp-dwn-toggle")) {
+  //   elmPrt = elm.parentElement;
+  // } else if (elm.classList.contains("drp-dwn-cls")) {
+  //   elmPrt = elm.parentElement.parentElement;
+  // }
+  elmTgl = elm.classList.contains("drp-dwn-toggle");
+  elmPrtMnuId = elm.getAttribute('aria-controls');
   elmMnu = document.getElementById(elmPrtMnuId);
 
+  console.log(elmTgl)
   // console.log(elmPrtMnuId)
   // console.log(elmMnu)
 
-  if (elmAtr === "false") {
-    elmPrt.setAttribute("aria-expanded", "true");
-    elmMnu.setAttribute("aria-hidden", "false");
-  } else if (elmAtr === "true") {
-    elmPrt.setAttribute("aria-expanded", "false");
-    elmMnu.setAttribute("aria-hidden", "true");
+  if (elmAtr === "false" && elmTgl) {
+    cngAtr(elm, "aria-expanded", "true");
+    cngAtr(elmMnu, "aria-hidden", "false");
+  } else if (elmAtr === "true" && elmTgl) {
+    cngAtr(elm, "aria-expanded", "false");
+    cngAtr(elmMnu, "aria-hidden", "true");
   }
 };
 
-const drpDwnEvts = () => {
-  let mblDrpDwnElm = document.getElementsByClassName("drp-dwn-toggle");
-  let mblDrpDwnCls = document.getElementsByClassName("drp-dwn-cls");
+const crntTabSlctd = (evt) => {
+  let navTabItm = document.getElementsByClassName("nav-item");
+  let elm = evt.currentTarget;
+  let elmAtr = elm.getAttribute("aria-selected");
 
-  for (let i = 0; i < mblDrpDwnElm.length; i++) {
-    let elm = mblDrpDwnElm[i];
-    createEvent("click", mblDrpDwn, elm);
+  for (let i = 0; i < navTabItm.length; i++) {
+    let e = navTabItm[i];
+    let tabAtr = e.getAttribute('role');
+
+    if (tabAtr === "tab") {
+      console.log(e)
+      e.setAttribute("aria-selected", "false");
+    }
+  }
+
+  if (elmAtr === "false") {
+    elm.setAttribute("aria-selected", "true");
+  } else if (elmAtr === "true") {
+    elm.setAttribute("aria-selected", "false");
+  }
+
+  console.log(elmAtr);
+}
+
+const drpDwnEvts = () => {
+  const navCntElm = document.getElementById("NavCont");
+  let drpDwnBtnElm = document.getElementsByClassName("drp-dwn-toggle");
+  let navLnkElm = navCntElm.getElementsByClassName("nav-link");
+  let mblDrpDwnCls = document.getElementsByClassName("drp-dwn-cls");
+  let navTabElm = document.getElementsByClassName("nav-item");
+
+  for (let i = 0; i < navLnkElm.length; i++) {
+    let elm = navLnkElm[i];
+    let tabAtr = elm.getAttribute('role');
+
+    if (tabAtr === "tab") {
+      console.log(elm)
+      createEvent("click", mblDrpDwn, elm);
+    }
   }
 
   for (let i = 0; i < mblDrpDwnCls.length; i++) {
